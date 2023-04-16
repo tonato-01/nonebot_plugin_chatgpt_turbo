@@ -27,10 +27,10 @@ public = plugin_config.chatgpt_turbo_public
 session = {}
 
 # 带上下文的聊天
-chat_record = on_command("chat", block=False, priority=1)
+chat_record = on_command("chat", block=True, priority=1)
 
 # 不带上下文的聊天
-chat_request = on_command("", rule=to_me(), block=False, priority=99)
+chat_request = on_command("ask", block=True, priority=99)
 
 # 清除历史记录
 clear_request = on_command("clear", block=True, priority=1)
@@ -52,7 +52,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     if content == "" or content is None:
         await chat_record.finish(MessageSegment.text("内容不能为空！"), at_sender=True)
 
-    await chat_record.send(MessageSegment.text("ChatGPT正在思考中......"))
+    # await chat_record.send(MessageSegment.text("ChatGPT正在思考中......"))
 
     # 创建会话ID
     session_id = create_session_id(event)
@@ -81,7 +81,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     if content == "" or content is None:
         await chat_request.finish(MessageSegment.text("内容不能为空！"))
 
-    await chat_request.send(MessageSegment.text("ChatGPT正在思考中......"))
+    # await chat_request.send(MessageSegment.text("ChatGPT正在思考中......"))
 
     try:
         res = await get_response(content, proxy)
