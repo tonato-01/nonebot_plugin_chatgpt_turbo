@@ -75,6 +75,57 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 # 不带记忆的对话
 @chat_request.handle()
 async def _(event: MessageEvent, msg: Message = CommandArg()):
+    # 若未开启私聊模式则检测到私聊就结束
+    if isinstance(event, PrivateMessageEvent) and not plugin_config.enable_private_chat:
+        chat_record.finish("对不起，私聊暂不支持此功能。")
+
+    # 检测是否填写 API key
+    if api_key == "":
+        await chat_record.finish(MessageSegment.text("请先配置openai_api_key"), at_sender=True)
+
+    # 提取提问内容
+    content = msg.extract_plain_text()
+    if content == "" or content is None:
+        await chat_record.finish(MessageSegment.text("内容不能为空！"), at_sender=True)
+
+    # await chat_record.send(MessageSegment.text("ChatGPT正在思考中......"))
+
+    # 创建会话ID
+    session_id = create_session_id(event)
+
+    # 初始化保存空间
+    if session_id not in session:
+        session[session_id] = ChatSession(api_key=api_key, model_id=model_id, max_limit=max_limit,org=org)
+
+    # 开始请求
+    try:
+        res = await session[session_id].get_response2(content, proxy)
+
+    except Exception as error:
+        await chat_record.finish(str(error), at_sender=True)
+    await chat_record.finish(MessageSegment.text(res), at_sender=True)
+
+
+@clear_request.handle()
+async def _(event: MessageEvent):
+    del session[create_session_id(event)]
+    await clear_request.finish(MessageSegment.text("成功清除历史记录！"), at_sender=True)
+
+
+# 根据消息类型创建会话id
+def create_session_id(event):
+    if isinstance(event, PrivateMessageEvent):
+        session_id = f"Private_{event.user_id}"
+    elif public:
+        session_id = event.get_session_id().replace(f"{event.user_id}", "Public")
+    else:
+        session_id = event.get_session_id()
+    return session_id
+
+"""
+# 不带记忆的对话
+@chat_request.handle()
+async def _(event: MessageEvent, msg: Message = CommandArg()):
 
     if isinstance(event, PrivateMessageEvent) and not plugin_config.enable_private_chat:
         chat_record.finish("对不起，私聊暂不支持此功能。")
@@ -93,21 +144,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     await chat_request.finish(MessageSegment.text(res))
 
 
-@clear_request.handle()
-async def _(event: MessageEvent):
-    del session[create_session_id(event)]
-    await clear_request.finish(MessageSegment.text("成功清除历史记录！"), at_sender=True)
 
-
-# 根据消息类型创建会话id
-def create_session_id(event):
-    if isinstance(event, PrivateMessageEvent):
-        session_id = f"Private_{event.user_id}"
-    elif public:
-        session_id = event.get_session_id().replace(f"{event.user_id}", "Public")
-    else:
-        session_id = event.get_session_id()
-    return session_id
 
 # 发送请求模块
 async def get_response(content, proxy, org):
@@ -130,3 +167,4 @@ async def get_response(content, proxy, org):
         res = res[1:]
 
     return res
+"""
