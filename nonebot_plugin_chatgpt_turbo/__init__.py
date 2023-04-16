@@ -22,6 +22,8 @@ if not plugin_config.openai_api_key:
 
 api_key = plugin_config.openai_api_key
 model_id = plugin_config.openai_model_name
+org=plugin_config.openai_org
+print(f"orgorgorgorg={org}")
 max_limit = plugin_config.openai_max_history_limit
 public = plugin_config.chatgpt_turbo_public
 session = {}
@@ -59,7 +61,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 
     # 初始化保存空间
     if session_id not in session:
-        session[session_id] = ChatSession(api_key=api_key, model_id=model_id, max_limit=max_limit)
+        session[session_id] = ChatSession(api_key=api_key, model_id=model_id, max_limit=max_limit,org=org)
 
     # 开始请求
     try:
@@ -84,7 +86,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     # await chat_request.send(MessageSegment.text("ChatGPT正在思考中......"))
 
     try:
-        res = await get_response(content, proxy)
+        res = await get_response(content, proxy,org)
 
     except Exception as error:
         await chat_request.finish(str(error))
@@ -108,10 +110,12 @@ def create_session_id(event):
     return session_id
 
 # 发送请求模块
-async def get_response(content, proxy):
+async def get_response(content, proxy, org):
     openai.api_key = api_key
     if proxy != "":
         openai.proxy = proxy
+    if org != "":
+        openai.organization = org
 
     res_ = await openai.ChatCompletion.acreate(
         model=model_id,

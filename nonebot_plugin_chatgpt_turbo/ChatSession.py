@@ -9,10 +9,12 @@ class ChatSession:
         self.count = 0
         self.max_limit = max_limit
 
-    async def get_response(self, content, proxy):
+    async def get_response(self, content, proxy, org):
         openai.api_key = self.api_key
         if proxy != "":
             openai.proxy = proxy
+        if org != "":
+            openai.organization = org
 
         try:
             self.content.append({"role": "user", "content": content})
