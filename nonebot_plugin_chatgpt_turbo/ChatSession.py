@@ -2,12 +2,13 @@ import openai
 
 
 class ChatSession:
-    def __init__(self, api_key, model_id, max_limit):
+    def __init__(self, api_key, model_id, max_limit,org):
         self.api_key = api_key
         self.model_id = model_id
         self.content = []
         self.count = 0
         self.max_limit = max_limit
+        self.org=org
 
     async def get_response(self, content, proxy, org):
         openai.api_key = self.api_key
