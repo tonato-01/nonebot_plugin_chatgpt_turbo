@@ -6,7 +6,6 @@ class ChatSession:
         self.api_key = api_key
         self.model_id = model_id
         self.content = []
-        self.count = 0
         self.max_limit = max_limit
         self.org=org
 
@@ -33,14 +32,11 @@ class ChatSession:
             res = res[1:]
 
         self.content.append({"role": 'assistant', "content": res})
-        self.count = self.count + 1
 
-        if self.count == self.max_limit:
-            self.count = 0
-            self.content = []
-            res += "\n历史对话达到上限，将清除历史记录"
+        while len(self.content) > 2*self.max_limit:
+            self.content.pop(0)
 
-        return res
+        return res+f"当前记忆条数{len(self.content)}"
 
     async def get_response2(self, content, proxy):
         openai.api_key = self.api_key
@@ -65,12 +61,10 @@ class ChatSession:
             res = res[1:]
 
         self.content.append({"role": 'assistant', "content": res})
-        self.count = self.count + 1
+   
 
-        if self.count == self.max_limit:
-            self.count = 0
-            self.content = []
-            res += "\n历史对话达到上限，将清除历史记录"
+        while len(self.content) > 2*self.max_limit:
+            self.content.pop(0)
 
-        return res
+        return res+f"当前记忆条数{len(self.content)}"
 
