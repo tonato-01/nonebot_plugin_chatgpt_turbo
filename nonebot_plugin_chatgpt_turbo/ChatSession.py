@@ -15,7 +15,7 @@ class ChatSession:
         if proxy != "":
             openai.proxy = proxy
         if self.org != "":
-            openai.organization = org
+            openai.organization = self.org
 
         try:
             self.content.append({"role": "user", "content": content})
