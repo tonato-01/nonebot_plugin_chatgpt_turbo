@@ -14,7 +14,7 @@ class ChatSession:
         openai.api_key = self.api_key
         if proxy != "":
             openai.proxy = proxy
-        if org != "":
+        if self.org != "":
             openai.organization = org
 
         try:
