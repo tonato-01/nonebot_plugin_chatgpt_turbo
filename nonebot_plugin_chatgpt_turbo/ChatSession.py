@@ -40,7 +40,7 @@ class ChatSession:
         while len(self.content) > 2*self.max_limit:
             self.content.pop(0)
 
-        return res+f"\n---当前记忆条数{len(self.content)}/{2*self.max_limit}---\n---请求token{use_prompt}回复token{use_completion}---\n---本次请求花费${round(price,5)}---"
+        return res+f"\n---当前记忆条数{len(self.content)}/{2*self.max_limit}---\n---请求token{use_prompt}回复token{use_completion}---\n---本次请求花费约￥{round(7.5*price,5)}---"
 
     async def get_response2(self, content, proxy):
         openai.api_key = self.api_key
@@ -74,5 +74,5 @@ class ChatSession:
         while len(self.content) > 2*self.max_limit:
             self.content.pop(0)
 
-        return res+f"\n---当前记忆条数{len(self.content)}/{2*self.max_limit}---\n---请求token{use_prompt}回复token{use_completion}---\n---本次请求花费${round(price,5)}---"
+        return res+f"\n---当前记忆条数{len(self.content)}/{2*self.max_limit}---\n---请求token{use_prompt}回复token{use_completion}---\n---本次请求花费约￥{round(7.5*price,5)}---"
 
