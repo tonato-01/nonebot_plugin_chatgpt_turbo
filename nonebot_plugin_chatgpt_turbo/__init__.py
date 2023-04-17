@@ -28,13 +28,13 @@ public = plugin_config.chatgpt_turbo_public
 session = {}
 
 # 带上下文的聊天
-chat_record = on_command("chat", block=True, priority=10)
+chat_record = on_command("chat",rule=to_me(), block=True, priority=10)
 
 # 不带上下文的聊天
-chat_request = on_command("ask", block=True, priority=10)
+chat_request = on_command("ask",rule=to_me(),block=True, priority=10)
 
 # 清除历史记录
-clear_request = on_command("clear", block=True, priority=10)
+clear_request = on_command("clear",rule=to_me(), block=True, priority=10)
 
 
 # 带记忆的聊天
