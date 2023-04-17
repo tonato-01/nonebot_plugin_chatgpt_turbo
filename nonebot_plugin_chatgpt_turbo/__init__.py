@@ -23,19 +23,18 @@ if not plugin_config.openai_api_key:
 api_key = plugin_config.openai_api_key
 model_id = plugin_config.openai_model_name
 org=plugin_config.openai_org
-print(f"orgorgorgorg={org}")
 max_limit = plugin_config.openai_max_history_limit
 public = plugin_config.chatgpt_turbo_public
 session = {}
 
 # 带上下文的聊天
-chat_record = on_command("chat", block=True, priority=1)
+chat_record = on_command("chat", block=True, priority=10)
 
 # 不带上下文的聊天
-chat_request = on_command("ask", block=True, priority=99)
+chat_request = on_command("ask", block=True, priority=10)
 
 # 清除历史记录
-clear_request = on_command("clear", block=True, priority=1)
+clear_request = on_command("clear", block=True, priority=10)
 
 
 # 带记忆的聊天
@@ -54,7 +53,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     if content == "" or content is None:
         await chat_record.finish(MessageSegment.text("内容不能为空！"), at_sender=True)
 
-    # await chat_record.send(MessageSegment.text("ChatGPT正在思考中......"))
+    await chat_record.send(MessageSegment.text("GPT4连续对话请求中......"))
 
     # 创建会话ID
     session_id = create_session_id(event)
@@ -88,7 +87,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     if content == "" or content is None:
         await chat_record.finish(MessageSegment.text("内容不能为空！"), at_sender=True)
 
-    # await chat_record.send(MessageSegment.text("ChatGPT正在思考中......"))
+    await chat_record.send(MessageSegment.text("GPT4单次请求中......"))
 
     # 创建会话ID
     session_id = create_session_id(event)
@@ -121,6 +120,8 @@ def create_session_id(event):
     else:
         session_id = event.get_session_id()
     return session_id
+
+
 
 """
 # 不带记忆的对话
